@@ -6,13 +6,9 @@ set -e
 cd /home/dspace
 
 ### Tomcat
-#wget  -O apache-tomcat-7.0.68.tar.gz "http://ftp.download-by.net/apache/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"
-#wget  -r --no-parent "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.68/"
 wget  -O apache-tomcat-7.0.68.tar.gz "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"
 tar -xzf apache-tomcat-7.0.68.tar.gz
 tomcatDir=/home/dspace/apache-tomcat-7.0.68/
-#tomcatDir=/home/dspace/archive.apache.org/dist/tomcat/tomcat-7/v7.0.68
-
 
 ### Dspace
 wget  -O dspace-5.2-src-release.tar.gz "http://downloads.sourceforge.net/project/dspace/DSpace%20Stable/5.2/dspace-5.2-src-release.tar.gz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fdspace%2F&ts=1455631293&use_mirror=freefr"
@@ -57,7 +53,5 @@ $tomcatDir/bin/startup.sh
 #test and create user
 $dspaceDir/bin/dspace database test
 $dspaceDir/bin/dspace create-administrator -e kaah@statsbiblioteket.dk -f Knud -l Hansen -c en -p hidden
-#$dspaceDir/bin/dspace create-administrator -e khg@statsbiblioteket.dk -f Katrine -l Gasser -c en -p hidden
-#$dspaceDir/bin/dspace create-administrator -e baj@statsbiblioteket.dk -f Bolette -l Jurik -c en -p hidden
 
 echo "Now go to http://localhost:1234/xmlui/ and log in as kaah@statsbiblioteket.dk with pass 'hidden'"
