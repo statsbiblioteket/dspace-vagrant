@@ -3,7 +3,8 @@
 #These are the things that need root access to do
 
 ### Java
-sudo apt-get -y install openjdk-7-jdk maven
+sudo apt-get update
+sudo apt-get -y install openjdk-7-jdk maven 
 
 ### Postgres
 sudo locale-gen da_DK.UTF-8 #Something wrong with ubuntu, this fixes it
@@ -15,3 +16,4 @@ sudo -u postgres createdb  --owner=dspace --encoding=UNICODE dspace #Create the 
 #Unix
 sudo useradd -m dspace
 sudo -u dspace bash /vagrant/dspace.sh
+
