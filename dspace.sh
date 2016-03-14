@@ -52,6 +52,6 @@ $tomcatDir/bin/startup.sh
 
 #test and create user
 $dspaceDir/bin/dspace database test
-$dspaceDir/bin/dspace create-administrator -e kaah@statsbiblioteket.dk -f Knud -l Hansen -c en -p hidden
+$dspaceDir/bin/dspace create-administrator -e statbib@gmail.com -f Stats -l biblioteket -c en -p hidden
 
-echo "Now go to http://localhost:1234/xmlui/ and log in as kaah@statsbiblioteket.dk with pass 'hidden'"
+echo "Now go to http://localhost:1234/xmlui/ and log in as statbib@gmail.com with pass 'hidden'"
