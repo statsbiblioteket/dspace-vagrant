@@ -1,18 +1,19 @@
+#dump database and upload it
 vagrant destroy
 update dspace.sh to new version
-vagrant up
-    vagrant ssh; sudo -u dspace /vagrant/dspace.sh
-dump database
-    vagrant ssh; sudo -u dspace pg_dump >> /vagrant/dump.sql
+vagrant up; vagrant ssh; sudo -u dspace /vagrant/dspace.sh
+vagrant ssh; sudo -u dspace pg_dump >> /vagrant/dump.sql
+scp dump.sql dspace@dspace-devel:.
+
+#create installable package
 vagrant destroy
-update dspace-extract to new version
-vagrant up
-    vagrant ssh; sudo -u dspace /vagrant/dspace-extract.sh
-    Hent kaffe, for det build skal downloade to internets
-tar /home/dspace contents to /vagrant/dspace-install.tar
-package database dump and contents
+vagrant up; vagrant ssh; sudo -u dspace /vagrant/dspace-extract.sh
+#Hent kaffe, for det build skal downloade to internets
+vagrant ssh; cp /home/dspace/installed.tar.gz /vagrant/
+scp installed.tar.gz dspace@dspace-devel:.
 
+#Installer på devel system
+ssh dspace@dspace-devel; cd /; tar -xvzf /home/dspace/installed.tar.gz
+ssh dspace@dspace-devel; createdb  --owner=dspace --encoding=UNICODE dspace; psql -d dspace -f dump.sql
+ssh dspace@dspace-devel; bin/tomcat-init.sh start
 
-on dspace-devel
-createdb  --owner=dspace --encoding=UNICODE dspace
- psql -d dspace -f dump.sql
