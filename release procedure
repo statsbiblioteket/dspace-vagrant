@@ -1,0 +1,18 @@
+vagrant destroy
+update dspace.sh to new version
+vagrant up
+    vagrant ssh; sudo -u dspace /vagrant/dspace.sh
+dump database
+    vagrant ssh; sudo -u dspace pg_dump >> /vagrant/dump.sql
+vagrant destroy
+update dspace-extract to new version
+vagrant up
+    vagrant ssh; sudo -u dspace /vagrant/dspace-extract.sh
+    Hent kaffe, for det build skal downloade to internets
+tar /home/dspace contents to /vagrant/dspace-install.tar
+package database dump and contents
+
+
+on dspace-devel
+createdb  --owner=dspace --encoding=UNICODE dspace
+ psql -d dspace -f dump.sql
