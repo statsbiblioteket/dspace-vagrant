@@ -9,7 +9,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/trusty64"
   # config.vm.box = "chef/centos-6.5"
   config.vm.provision :shell, :name => "bootstrap.sh", :path => "bootstrap.sh"
-  config.vm.network :forwarded_port, :host => 8080, :guest => 8080
+  config.vm.network :forwarded_port, :host => 9841, :guest => 9841
+  config.vm.network :forwarded_port, :host => 15432, :guest => 5432
 
 
   config.vm.provider "virtualbox" do |v|
