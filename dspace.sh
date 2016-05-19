@@ -26,8 +26,15 @@ sed -i "s|\(dspace.install.dir=\).*|\1$dspaceDir|g" build.properties
 #Build DSpace
 mvn package
 cd /home/dspace/dspace-5.5-release/dspace/target/dspace-installer
+pushd config
+sed -i "s|\(db.password = \).*|\1dspacePass|g" dspace.cfg
+popd
+#Remove config symlink if present
+rm -f $dspaceDir/config
+
 ant fresh_install
-pushd /home/dspace/install/config
+
+pushd $dspaceDir/config
 sed -i "s|\(mail.server =\).*|\1mobile.statsbiblioteket.dk|g" dspace.cfg
 sed -i "s|\(dspace.hostname =\).*|\1pc621.sb.statsbiblioteket.dk|g" dspace.cfg
 sed -i "s|\(dspace.baseUrl =\).*|\1pc621.sb.statsbiblioteket.dk:1234|g" dspace.cfg
@@ -35,10 +42,20 @@ sed -i "s|\(dspace.url =\).*|\1pc621.sb.statsbiblioteket.dk:9841/xmlui|g" dspace
 echo "mail.extraproperties = mail.smtp.socketFactory.port=465, \ mail.smtp.socketFactory.class=, \ mail.smtp.socketFactory.fallback=false" >> dspace.cfg
 popd
 
+#replace installed config with our own
+rm -rf $dspaceDir/config
+ln -s /vagrant/config $dspaceDir/config
 
 #Install the dspace webservices
 cp -r $dspaceDir/webapps/* $tomcatDir/webapps
 
+#Set tomcat port to 9841
+pushd /home/dspace/apache-tomcat-*/conf
+sed -i 's|port="8080"|port="9841"|g' server.xml
+popd
+
+#Remove lingering tomcat, if any
+killall java
 #Start tomcat
 $tomcatDir/bin/startup.sh
 

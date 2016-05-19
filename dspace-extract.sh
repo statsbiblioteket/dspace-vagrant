@@ -32,6 +32,10 @@ mkdir -p $tomcatDir/webapps/
 cp  $dspaceDir/webapps/*.war $tomcatDir/webapps
 
 cd $dspaceDir
+
+rm -rf $dspaceDir/config
+ln -s /vagrant/config $dspaceDir/config
+
 pushd config
 sed -i "s|\(dspace.dir = \).*|\1$dspaceDir|g" dspace.cfg
 sed -i "s|\(dspace.hostname = \).*|\1dspace-devel|g" dspace.cfg
