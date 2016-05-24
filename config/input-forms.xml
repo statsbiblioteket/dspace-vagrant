@@ -71,6 +71,7 @@
           <hint>If the item has any alternative titles, please enter them here.</hint>
           <required></required>
         </field>
+       -->
 
         <field>
           <dc-schema>dc</dc-schema>
@@ -82,7 +83,6 @@
           <hint>Please give the date of previous publication or public distribution.
                          You can leave out the day and/or month if they aren't
                          applicable.</hint>
-          <required>You must enter at least the year.</required>
         </field>
 
         <field>
@@ -93,7 +93,6 @@
           <label>Publisher</label>
           <input-type>onebox</input-type>
           <hint>Enter the name of the publisher of the previously issued instance of this item.</hint>
-          <required></required>
         </field>
 
         <field>
@@ -104,9 +103,9 @@
           <label>Citation</label>
           <input-type>onebox</input-type>
           <hint>Enter the standard citation for the previously issued instance of this item.</hint>
-          <required></required>
         </field>
 
+        <!--
         <field>
           <dc-schema>dc</dc-schema>
           <dc-element>relation</dc-element>
@@ -129,7 +128,7 @@
           <hint>If the item has any identification numbers or codes associated with it, please enter the types and the actual numbers or codes.</hint>
           <required></required>
         </field>
-       -->
+        -->
 
         <field>
           <dc-schema>dc</dc-schema>
