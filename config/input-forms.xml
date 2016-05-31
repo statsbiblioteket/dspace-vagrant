@@ -44,7 +44,7 @@
           <dc-qualifier>author</dc-qualifier><!--skal det ikke være creator?-->
           <repeatable>true</repeatable>
           <label>Authors</label>
-          <input-type>twobox</input-type>
+          <input-type>onebox</input-type>
           <hint>Enter the names and ORCIDs of the authors of this item. TODO: ORCID extension. If you do not have an ORCID, register for one here https://orcid.org/register</hint>
           <required></required>
         </field>
@@ -208,7 +208,7 @@
           <dc-qualifier>isReferencedBy</dc-qualifier>
           <repeatable>true</repeatable>
           <label>Relation</label>
-          <input-type>textarea</input-type>
+          <input-type>onebox</input-type>
           <hint>Enter any papers citing/using this dataset. </hint>
         </field>
       </page>
