@@ -4,7 +4,7 @@
 
 ### Java
 sudo apt-get update
-sudo apt-get -y install openjdk-7-jdk maven 
+sudo apt-get -y install openjdk-7-jre ant
 
 ### Postgres
 sudo locale-gen da_DK.UTF-8 #Something wrong with ubuntu, this fixes it

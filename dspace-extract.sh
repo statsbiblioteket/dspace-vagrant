@@ -1,46 +1,59 @@
 #!/usr/bin/env bash
 
 set -e
+set -x
 #All of this is executed as the DSpace user
+SCRIPT_PATH=$(dirname $(readlink -f $0))
 
-tmpDir=/home/dspace/tmp
-mkdir -p $tmpDir
-cd $tmpDir
+killall -q java || echo "no running javas found :)"
 
-### Dspace
-wget  -O dspace-5.5-release.tar.gz "https://github.com/DSpace/DSpace/releases/download/dspace-5.5/dspace-5.5-release.tar.gz"
-tar -xzf dspace-5.5-release.tar.gz
-dspaceDir="/home/dspace"
+source $SCRIPT_PATH/config
+mkdir -p ${DSPACE_INSTALL_DIR}
+mkdir -p ${DSPACE_SOURCE_DIR}
+mkdir -p ${TOMCAT_DIR}
 
-cd "$tmpDir/dspace-5.5-release"
-sed -i "s|\(dspace.install.dir=\).*|\1$dspaceDir|g" build.properties
+TEMPDIR=$(mktemp -d)
+cd $TEMPDIR
+
+### Tomcat
+wget  -O apache-tomcat.tar.gz ${TOMCAT_DOWNLOAD_URL}
+tar -xzf apache-tomcat.tar.gz --strip-components 1 -C $TOMCAT_DIR
+rm -rf $TOMCAT_DIR/webapps/* #Removing default webservices
 
 
-#Build DSpace
-cd dspace
-mvn package -Pdspace-lni
-cd target/dspace-installer
-pushd $dspaceDir
-rm  -rf bin config etc lib solr tomcat webapps
+### Run DSpace installer
+tar -xzf /vagrant/dspace-5.5-SB-0.1-SNAPSHOT-installer.tar.gz -C ${DSPACE_SOURCE_DIR}
+pushd $DSPACE_SOURCE_DIR
+    sed -i "s|\(dspace.dir = \).*|\1$DSPACE_INSTALL_DIR|g" config/dspace.cfg
+    sed -i "s|\(dspace.hostname = \).*|\1dspace-devel|g" config/dspace.cfg
+    sed -i "s|\(dspace.baseUrl = \).*|\1http://dspace-devel:9841/|g" config/dspace.cfg
+    sed -i "s|\(dspace.url = \).*|\1http://dspace-devel:9841/xmlui|g" config/dspace.cfg
+    sed -i "s|\(dspace.name = \).*|\1Statsbiblioteket|g" config/dspace.cfg
+    sed -i "s|\(default.language = \).*|\1da_DK|g" config/dspace.cfg
+    sed -i "s|\(db.password = \).*|\1dspacePass|g" config/dspace.cfg
+    echo "mail.extraproperties = mail.smtp.socketFactory.port=465, \ mail.smtp.socketFactory.class=, \ mail.smtp.socketFactory.fallback=false" >> config/dspace.cfg
+    ant -Dwars=true fresh_install
 popd
-ant -Dwars=true update_code update_configs update_webapps
 
-tomcatDir=/home/dspace/tomcat/
-
-mkdir -p $tomcatDir/webapps/
 #Install the dspace webservices
-cp  $dspaceDir/webapps/*.war $tomcatDir/webapps
+mkdir -p $TOMCAT_DIR/webapps/
+cp  $DSPACE_INSTALL_DIR/webapps/*.war $TOMCAT_DIR/webapps
 
-cd $dspaceDir
-pushd config
-sed -i "s|\(dspace.dir = \).*|\1$dspaceDir|g" dspace.cfg
-sed -i "s|\(dspace.hostname = \).*|\1dspace-devel|g" dspace.cfg
-sed -i "s|\(dspace.baseUrl = \).*|\1http://dspace-devel:9841/|g" dspace.cfg
-sed -i "s|\(dspace.url = \).*|\1http://dspace-devel:9841/xmlui|g" dspace.cfg
-sed -i "s|\(dspace.name = \).*|\1Statsbiblioteket|g" dspace.cfg
-sed -i "s|\(default.language = \).*|\1da_DK|g" dspace.cfg
-sed -i "s|\(db.password = \).*|\1Qcqmoj0rsQ5c|g" dspace.cfg
-echo "mail.extraproperties = mail.smtp.socketFactory.port=465, \ mail.smtp.socketFactory.class=, \ mail.smtp.socketFactory.fallback=false" >> dspace.cfg
-popd
-rm installed.tar.gz
-tar -cvzf installed.tar.gz --exclude installed.tar.gz --exclude /home/dspace/tmp --exclude /home/dspace/.m2 --exclude /home/dspace/webapps /home/dspace/
+#Start tomcat
+$TOMCAT_DIR/bin/startup.sh
+
+#test and create user
+$DSPACE_INSTALL_DIR/bin/dspace database test
+$DSPACE_INSTALL_DIR/bin/dspace create-administrator -e statbib@gmail.com -f Stats -l biblioteket -c en -p hidden
+
+
+
+#Dump database
+pg_dump >> /home/dspace/dump.sql
+
+#Package dspace
+rm -f /vagrant/installed.tar.gz
+tar -cvzf /vagrant/installed.tar.gz \
+    --exclude $DSPACE_INSTALL_DIR/webapps \
+    $DSPACE_INSTALL_DIR
+tar -rvzf /vagrant/installed.tar.gz $TOMCAT_DIR/webapps/*.war
