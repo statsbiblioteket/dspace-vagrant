@@ -17,3 +17,60 @@ ssh dspace@dspace-devel; cd /; tar -xvzf /home/dspace/installed.tar.gz
 ssh dspace@dspace-devel; createdb  --owner=dspace --encoding=UNICODE dspace; psql -d dspace -f dump.sql
 ssh dspace@dspace-devel; bin/tomcat-init.sh start
 
+
+
+
+Jeg har lavet en ny og bedre installations procedure til DSpace
+
+
+##Binary Release package
+DSpace fungerer lidt sjovt. Man henter deres binary release pakke. Det er basalt set en source release, som man kan(skal)
+selv, for at få en installer.
+
+Pointen her er at hvis man har brug for at ændre kode eller lægge mere funktionalitet ind i DSpace's webservices, så gøres
+det inden man bygger installeren.
+
+Jeg har lavet et repository
+https://sbprojects.statsbiblioteket.dk/stash/projects/DAMA/repos/dspace-overlay
+Det er en udpakning af dspace binary release 5.5, med nogen få tilretninger
+ * Build lni service per default (fixed bug)
+ * Deploys to sbprojects nexus. Fixed version number to be 5.5-SB-0.1-SNAPSHOT
+ * Build and attach the installer as a tar.gz file
+ * gitignore
+
+Jeg har opdateret versionsnummeret til 5.5-SB-0.1-SNAPSHOT, for at vise hvordan den er en SB specifik afledt udgave af
+5.5
+
+Denne kører som et jenkins job TODO.
+Dvs. at hvis man laver en rettelse i dspace-overlay, vil en ny installer blive bygget og uploaded til nexus
+Man kan så hente den nyeste installer vha. denne url
+https://sbprojects.statsbiblioteket.dk/nexus/service/local/artifact/maven/content?r=public&g=org.dspace&a=dspace&v=5.5-SB-0.1-SNAPSHOT&c=installer&e=tar.gz
+
+##Installer
+Denne dspace installer der bliver bygget er en god tar.gz fil på 700+ MB. Den kræver kun Ant og Java Runtime Environment (JRE) for at installere
+
+Den består af et sæt af webservices som skal køre i en tomcat, og noget kode der ligger ved siden af.
+DSpace bruger en database til at gemme sine ting, og den er skrevet til at udføre database skema migreringer, hvis den
+bliver startet på en gammel version af databasen.
+
+##Installation
+
+Det mener jeg faktisk er OK at bede Drift/Tony om at gøre. Ant uden JDK er i hvert fald ret tæt på hvad de kan kræve. Men ellers kan de få et dump af hvad der ligger i den vagrant nu.
+
+
+Så vi har to faser hvor man kan tilføje ting til DSpace
+
+Vi har build fasen i dspace-overlay. Her tilføjer man ting der skal pakkes ind i dspace
+
+Vi har install fasen, dvs. efter man har pakket installeren ud, men inden man kører den ant-baserede installer
+Der er her vi ændrer de config filer der styrer hvad der sker hvor
+Men det kan man vel også gøre efter systemet er installeret.
+
+
+
+Jeg har flyttet vores dspace vagrant herover
+https://sbprojects.statsbiblioteket.dk/stash/projects/DAMA/repos/dspace-sb/browse
+Det er her hvor vi så vil arbejde med vores dspace config
+
+
+

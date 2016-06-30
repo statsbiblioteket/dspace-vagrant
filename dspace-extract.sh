@@ -32,6 +32,11 @@ pushd $DSPACE_SOURCE_DIR
     sed -i "s|\(default.language = \).*|\1da_DK|g" config/dspace.cfg
     sed -i "s|\(db.password = \).*|\1dspacePass|g" config/dspace.cfg
     echo "mail.extraproperties = mail.smtp.socketFactory.port=465, \ mail.smtp.socketFactory.class=, \ mail.smtp.socketFactory.fallback=false" >> config/dspace.cfg
+
+    #Ant reads config from
+    #  config/dspace.cfg
+    #  ${user.home}/.dspace.properties
+
     ant -Dwars=true fresh_install
 popd
 
